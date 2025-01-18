@@ -1,5 +1,6 @@
 import https from 'https';
 import axios, { type AxiosInstance } from 'axios';
+import axiosRetry from 'axios-retry';
 
 import { HardwareInfo, HardwareInfoSchema, LastCapturedMedia, LastCapturedMediaSchema, ShutterMode, Version, VersionSchema } from './types';
 import { AvailablePresets, AvailablePresetsSchema, PresetGroupEnum } from './types/Preset';
@@ -27,6 +28,8 @@ class GoProHttpClient {
       },
       httpsAgent,
     });
+
+    axiosRetry(this.api, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
   }
 
   private api: AxiosInstance;
@@ -58,7 +61,7 @@ class GoProHttpClient {
     return AvailablePresetsSchema.parse(response.data);
   }
 
-  public async getCameraState(): Promise<any> {
+  public async getState(): Promise<StateResponse> {
     const response = await this.api.get<StateResponse>('/gopro/camera/state');
 
     return StateResponseSchema.parse(response.data);
