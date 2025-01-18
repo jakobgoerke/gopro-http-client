@@ -1,6 +1,6 @@
 {
   "name": "@jakobgoerke/gopro-http-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "build/src",
   "types": "build/src/index.d.ts",
   "repository": "git@github.com:jakobgoerke/gopro-http-client.git",
