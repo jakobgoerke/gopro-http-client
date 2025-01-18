@@ -16,22 +16,21 @@ export const StatusSchema = z.object({
 });
 export type Status = z.infer<typeof StatusSchema>;
 
-export const StateResponseSchema = z.object({
-  status: StatusSchema.transform((data) => {
-    const x = {};
+export const StateResponseSchema = z
+  .object({
+    status: StatusSchema,
+  })
+  .transform((data) => {
+    const transformedStatus = Object.fromEntries(
+      Object.entries(data.status).map(([key, value]) => {
+        const settingsKey = SettingsMap.get(parseInt(key));
+        return settingsKey ? [settingsKey, value] : [key, value];
+      })
+    );
 
-    Object.keys(data).map((key) => {
-      const settingsKey = SettingsMap.get(parseInt(key));
-      if (settingsKey) {
-        // @ts-ignore
-        x[settingsKey] = data[key];
-      }
-    });
-
-    return x;
-  }),
-});
-export type StateRespons = z.infer<typeof StateResponseSchema>;
+    return { ...data, status: transformedStatus };
+  });
+export type StateResponse = z.infer<typeof StateResponseSchema>;
 
 export enum SettingsKey {
   IsBusy = 'isBusy',

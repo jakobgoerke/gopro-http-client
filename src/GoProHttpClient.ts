@@ -3,13 +3,7 @@ import axios, { type AxiosInstance } from 'axios';
 
 import { HardwareInfo, HardwareInfoSchema, LastCapturedMedia, LastCapturedMediaSchema, ShutterMode, Version, VersionSchema } from './types';
 import { AvailablePresets, AvailablePresetsSchema, PresetGroupEnum } from './types/Preset';
-import { StateRespons, StateResponseSchema } from './types/State';
-
-export enum Url {
-  Version = '/gopro/version',
-  HardwareInfo = '/gopro/camera/info',
-  LastCapturedMedia = '/gopro/media/last_captured',
-}
+import { StateResponse, StateResponseSchema } from './types/State';
 
 interface GoProHttpClientConfig {
   ip: string;
@@ -37,21 +31,23 @@ class GoProHttpClient {
 
   private api: AxiosInstance;
 
-  // query
+  /**
+   * Query
+   */
   public async getLastCapturedMedia(): Promise<LastCapturedMedia> {
-    const response = await this.api.get<LastCapturedMedia>(Url.LastCapturedMedia);
+    const response = await this.api.get<LastCapturedMedia>('/gopro/media/last_captured');
 
     return LastCapturedMediaSchema.parse(response.data);
   }
 
   public async getVersion(): Promise<Version> {
-    const response = await this.api.get<Version>(Url.Version);
+    const response = await this.api.get<Version>('/gopro/version');
 
     return VersionSchema.parse(response.data);
   }
 
   public async getHardwareInfo(): Promise<HardwareInfo> {
-    const response = await this.api.get<HardwareInfo>(Url.HardwareInfo);
+    const response = await this.api.get<HardwareInfo>('/gopro/camera/info');
 
     return HardwareInfoSchema.parse(response.data);
   }
@@ -63,17 +59,21 @@ class GoProHttpClient {
   }
 
   public async getCameraState(): Promise<any> {
-    const response = await this.api.get<StateRespons>('/gopro/camera/state');
+    const response = await this.api.get<StateResponse>('/gopro/camera/state');
 
     return StateResponseSchema.parse(response.data);
   }
 
-  // presets
+  /**
+   * Preset
+   */
   public async setPresetGroup(id: PresetGroupEnum): Promise<void> {
     await this.api.get('/gopro/camera/presets/set_group', { params: { id } });
   }
 
-  // media
+  /**
+   * Media
+   */
   public async downloadMedia(directory: string, filename: string): Promise<Buffer> {
     const response = await this.api.get<ArrayBuffer>(`/videos/DCIM/${encodeURIComponent(directory)}/${encodeURIComponent(filename)}`, {
       headers: {
@@ -85,7 +85,9 @@ class GoProHttpClient {
     return Buffer.from(response.data);
   }
 
-  // control
+  /**
+   * Control
+   */
   public async setShutter(mode: ShutterMode): Promise<void> {
     await this.api.get(`/gopro/camera/shutter/${mode}`);
   }
@@ -96,4 +98,4 @@ class GoProHttpClient {
   }
 }
 
-export { GoProHttpClient, PresetGroupEnum };
+export { GoProHttpClient };
