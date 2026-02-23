@@ -29,7 +29,7 @@ class GoProHttpClient {
       httpsAgent,
     });
 
-    axiosRetry(this.api, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
+    axiosRetry(this.api, { retries: 3, retryDelay: axiosRetry.exponentialDelay, shouldResetTimeout: true });
   }
 
   private api: AxiosInstance;
@@ -83,6 +83,7 @@ class GoProHttpClient {
         Accept: 'application/octet-stream',
       },
       responseType: 'arraybuffer',
+      timeout: 30000,
     });
 
     return Buffer.from(response.data);
@@ -93,6 +94,10 @@ class GoProHttpClient {
    */
   public async setShutter(mode: ShutterMode): Promise<void> {
     await this.api.get(`/gopro/camera/shutter/${mode}`);
+  }
+
+  public async keepAlive(): Promise<void> {
+    await this.api.get('/gopro/camera/keep_alive');
   }
 
   static async build(config: GoProHttpClientConfig): Promise<GoProHttpClient> {
