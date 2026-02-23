@@ -23,9 +23,9 @@ export const StateResponseSchema = z
   .transform((data) => {
     const transformedStatus = Object.fromEntries(
       Object.entries(data.status).map(([key, value]) => {
-        const settingsKey = SettingsMap.get(parseInt(key));
+        const settingsKey = SettingsMap.get(parseInt(key, 10));
         return settingsKey ? [settingsKey, value] : [key, value];
-      })
+      }),
     );
 
     return { ...data, status: transformedStatus };

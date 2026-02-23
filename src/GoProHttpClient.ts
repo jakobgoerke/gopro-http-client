@@ -1,4 +1,4 @@
-import https from 'https';
+import https from 'node:https';
 import axios, { type AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 
@@ -24,7 +24,7 @@ class GoProHttpClient {
       timeout: 5000,
       baseURL: `https://${config.ip}/`,
       headers: {
-        Authorization: 'Basic ' + token,
+        Authorization: `Basic ${token}`,
       },
       httpsAgent,
     });

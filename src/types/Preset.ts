@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 // https://github.com/colinhacks/zod/discussions/839#discussioncomment-10651593
+// biome-ignore lint/suspicious/noExplicitAny: i decided i dont care for now
 function zObjectKeys<T extends Record<string, any>>(obj: T) {
   const keys = Object.keys(obj) as Extract<keyof T, string>[];
   return z.enum(keys as [Extract<keyof T, string>, ...Extract<keyof T, string>[]]);
